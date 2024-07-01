@@ -3,15 +3,7 @@ import PropTypes from "prop-types";
 import ProductCatalog from "./ProductCatalog"
 import { productPropType } from "./types/PropTypes";
 
-const Product = ({ product, onAddToCart }) => {
-  const [quantity, setQuantity] = useState(1);
-
-  const handleChange = (e) => {
-    const value = parseInt(e.target.value, 10);
-    if (!isNaN(value) && value > 0 && value <= product.stock) {
-      setQuantity(value);
-    }
-  };
+const Product = ({ product,text, onAddToCart, handleQuantityChange }) => {
 
   return (
     <div className="container">
@@ -24,9 +16,9 @@ const Product = ({ product, onAddToCart }) => {
       </div>
       <ProductCatalog
         product={product}
-        quantity={quantity}
         onAddToCart={onAddToCart}
-        handleChange={handleChange}
+        text={text}
+        handleQuantityChange={handleQuantityChange}
       />
     </div>
   );
@@ -34,7 +26,9 @@ const Product = ({ product, onAddToCart }) => {
 
 Product.propTypes = {
   product: productPropType.isRequired,
-  onAddToCart: PropTypes.func.isRequired,
+  text: PropTypes.string.isRequired,
+  onAddToCart: PropTypes.func,
+  handleQuantityChange: PropTypes.func.isRequired,
 };
 
 export default Product;
