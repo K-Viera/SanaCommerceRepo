@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Product from "../components/Product";
-import {useSelector, useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartSlice";
 
 const initialProducts = [
@@ -61,9 +61,9 @@ const initialProducts = [
 ];
 
 const Catalog = () => {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
-  const cartItems = useSelector(state => state.cart.items);
+  const cartItems = useSelector((state) => state.cart.items);
 
   const handleAddToCart = (productId, quantity) => {
     setProducts(
@@ -105,6 +105,50 @@ const Catalog = () => {
       })
     );
   };
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      console.log("Fetching products")
+      const response = await fetch("https://localhost:7233/graphql/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          // Add any other headers like authorization if needed
+        },
+        body: JSON.stringify({
+          query: `
+            {
+              products {
+                description
+                price
+                productCode
+                productId
+                productName
+                stock
+              }
+            }
+          `,
+        }),
+      });
+
+      const { data } = await response.json();
+      if (data && data.products) {
+        console.log(data.products);
+        const products = data.products.map((product) => ({
+          id: product.productId,
+          title: product.productName,
+          code: product.productCode,
+          description: product.description,
+          price: product.price,
+          stock: product.stock,
+          quantity: 0,
+        }));
+        setProducts(products);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <div>

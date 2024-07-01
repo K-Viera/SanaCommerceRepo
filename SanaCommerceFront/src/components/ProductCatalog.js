@@ -35,7 +35,7 @@ const ProductCatalog = ({
 ProductCatalog.propTypes = {
   product: productPropType.isRequired,
   text: PropTypes.string,
-  onAddToCart: PropTypes.func.isRequired,
+  onAddToCart: PropTypes.func,
   handleQuantityChange: PropTypes.func.isRequired,
 };
 

@@ -23,13 +23,25 @@ builder.Services
     .AddFiltering()
     .AddSorting();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAnyOrigin",
+        builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+});
+
 var app = builder.Build();
 
+// Apply the CORS policy
+app.UseCors("AllowAnyOrigin");
 
+app.UseHttpsRedirection();
+
+app.MapGraphQL();
+
+app.Run();
 app.UseHttpsRedirection();
 
 app.MapGraphQL();
 
 
 app.Run();
-

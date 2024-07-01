@@ -26,7 +26,7 @@ const Product = ({ product,text, onAddToCart, handleQuantityChange }) => {
 
 Product.propTypes = {
   product: productPropType.isRequired,
-  text: PropTypes.string.isRequired,
+  text: PropTypes.string,
   onAddToCart: PropTypes.func,
   handleQuantityChange: PropTypes.func.isRequired,
 };
