@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import cartReducer from './CartSlice';
+import profileReducer from './ProfileSlice';
 
-// Function to load the cart state from localStorage
 const loadCartState = () => {
   try {
     const serializedCart = localStorage.getItem('cartState');
@@ -15,11 +15,10 @@ const loadCartState = () => {
   }
 };
 
-// Function to save the cart state to localStorage
 const saveCartState = (state) => {
   try {
     const serializedCart = JSON.stringify(state);
-    console.log("Saved");
+    console.log("Saved",serializedCart);
     localStorage.setItem('cartState', serializedCart);
   } catch (err) {
     // Handle write errors
@@ -27,12 +26,13 @@ const saveCartState = (state) => {
 };
 
 const preloadedState = {
-  cart: loadCartState(), // Load cart state from localStorage
+  cart: loadCartState(),
 };
 
 const store = configureStore({
   reducer: {  
     cart: cartReducer,
+    profile: profileReducer
   },
   preloadedState,
 });

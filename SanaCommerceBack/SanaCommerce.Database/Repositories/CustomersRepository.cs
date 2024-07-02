@@ -15,6 +15,7 @@ public interface ICustomersRepository
     IEnumerable<Customer> Get();
     Task<Customer?> Get(int customerId);
     Task<Customer> Update(Customer customer);
+    Task<Customer?> FindByEmail(string email);
 }
 
 public class CustomersRepository : ICustomersRepository
@@ -78,4 +79,11 @@ public class CustomersRepository : ICustomersRepository
         }
     }
 
+    public async Task<Customer?> FindByEmail(string email)
+    {
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            return await context.Customers.FirstOrDefaultAsync(c => c.Email == email);
+        }
+    }
 }

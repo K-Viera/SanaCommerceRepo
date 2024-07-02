@@ -1,0 +1,197 @@
+type Query {
+  categories(
+    where: CategoryTypeFilterInput
+    order: [CategoryTypeSortInput!]
+  ): [CategoryType!]!
+  customers(
+    where: CustomerTypeFilterInput
+    order: [CustomerTypeSortInput!]
+  ): [CustomerType!]!
+  orders(
+    where: OrderTypeFilterInput
+    order: [OrderTypeSortInput!]
+  ): [OrderType!]!
+  products(
+    where: ProductTypeFilterInput
+    order: [ProductTypeSortInput!]
+  ): [ProductType!]!
+}
+
+
+
+input CategoryTypeFilterInput {
+  and: [CategoryTypeFilterInput!]
+  or: [CategoryTypeFilterInput!]
+  categoryId: IntOperationFilterInput
+  categoryName: StringOperationFilterInput
+}
+
+input CategoryTypeSortInput {
+  categoryId: SortEnumType
+  categoryName: SortEnumType
+}
+
+input CustomerTypeFilterInput {
+  and: [CustomerTypeFilterInput!]
+  or: [CustomerTypeFilterInput!]
+  customerId: IntOperationFilterInput
+  firstName: StringOperationFilterInput
+  lastName: StringOperationFilterInput
+  email: StringOperationFilterInput
+}
+
+input CustomerTypeSortInput {
+  customerId: SortEnumType
+  firstName: SortEnumType
+  lastName: SortEnumType
+  email: SortEnumType
+}
+
+input OrderTypeFilterInput {
+  and: [OrderTypeFilterInput!]
+  or: [OrderTypeFilterInput!]
+  orderId: IntOperationFilterInput
+  orderDate: DateTimeOperationFilterInput
+  customerId: IntOperationFilterInput
+}
+
+input OrderTypeSortInput {
+  orderId: SortEnumType
+  orderDate: SortEnumType
+  customerId: SortEnumType
+}
+
+input ProductTypeFilterInput {
+  and: [ProductTypeFilterInput!]
+  or: [ProductTypeFilterInput!]
+  productId: IntOperationFilterInput
+  productName: StringOperationFilterInput
+  productCode: StringOperationFilterInput
+  description: StringOperationFilterInput
+  price: DecimalOperationFilterInput
+  stock: IntOperationFilterInput
+}
+
+input ProductTypeSortInput {
+  productId: SortEnumType
+  productName: SortEnumType
+  productCode: SortEnumType
+  description: SortEnumType
+  price: SortEnumType
+  stock: SortEnumType
+}
+
+input IntOperationFilterInput {
+  eq: Int
+  neq: Int
+  in: [Int]
+  nin: [Int]
+  gt: Int
+  ngt: Int
+  gte: Int
+  ngte: Int
+  lt: Int
+  nlt: Int
+  lte: Int
+  nlte: Int
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+input DateTimeOperationFilterInput {
+  eq: DateTime
+  neq: DateTime
+  in: [DateTime]
+  nin: [DateTime]
+  gt: DateTime
+  ngt: DateTime
+  gte: DateTime
+  ngte: DateTime
+  lt: DateTime
+  nlt: DateTime
+  lte: DateTime
+  nlte: DateTime
+}
+
+input DecimalOperationFilterInput {
+  eq: Decimal
+  neq: Decimal
+  in: [Decimal]
+  nin: [Decimal]
+  gt: Decimal
+  ngt: Decimal
+  gte: Decimal
+  ngte: Decimal
+  lt: Decimal
+  nlt: Decimal
+  lte: Decimal
+  nlte: Decimal
+}
+
+"""
+The `DateTime` scalar represents an ISO-8601 compliant date time type.
+"""
+scalar DateTime @specifiedBy(url: "https://www.graphql-scalars.com/date-time")
+
+"""
+The built-in `Decimal` scalar type.
+"""
+scalar Decimal
+
+type OrderType {
+  customer: CustomerType!
+  orderId: Int!
+  orderDate: DateTime!
+  customerId: Int!
+}
+
+type CustomerType {
+  orders: [OrderType]!
+  customerId: Int!
+  firstName: String!
+  lastName: String
+  email: String!
+}
+
+type CategoryType {
+  products: [ProductType!]!
+  categoryId: Int!
+  categoryName: String!
+}
+
+type ProductType {
+  categories: [CategoryType!]!
+  orders: [OrderTypeQuantity!]!
+  productId: Int!
+  productName: String!
+  productCode: String!
+  description: String!
+  price: Decimal!
+  stock: Int!
+}
+
+type OrderTypeQuantity {
+  customer: CustomerType!
+  quantity: Int
+  orderId: Int!
+  orderDate: DateTime!
+  customerId: Int!
+}

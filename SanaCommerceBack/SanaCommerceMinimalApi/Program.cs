@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using SanaCommerce.Database;
 using SanaCommerce.Database.Repositories;
 using SanaCommerce.GraphQL;
+using SanaCommerce.GraphQL.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,11 +15,16 @@ builder.Services.AddPooledDbContextFactory<SanaCommerceContext>(options =>
 
 builder.Services.AddScoped<IOrdersRepository, OrdersRepository>();
 builder.Services.AddScoped<ICustomersRepository, CustomersRepository>();
+builder.Services.AddScoped<IProductsRepository, ProductsRepository>();
+builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 
 builder.Services
     .AddGraphQLServer()
     .AddQueryType<Query>()
     .AddMutationType<Mutation>()
+    .AddType<CreateOrderRequestType>()
+    .AddType<OrderLineType>()
+    .AddType<CreateOrderResponseType>()
     .AddProjections()
     .AddFiltering()
     .AddSorting();
@@ -31,7 +37,6 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-// Apply the CORS policy
 app.UseCors("AllowAnyOrigin");
 
 app.UseHttpsRedirection();

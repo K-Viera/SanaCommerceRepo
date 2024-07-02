@@ -16,18 +16,17 @@ public class ProductType
     public decimal Price { get; set; }
     public int Stock { get; set; }
 
-    //[GraphQLNonNullType]
-    //public async Task<List<CategoryType>> Categories([Service] ICategoriesRepository categoriesRepository)
-    //{
-    //    var categories = await categoriesRepository.GetByProductId(ProductId);
-    //    return categories.Select(c => new CategoryType
-    //    {
-    //        CategoryId = c.CategoryId,
-    //        CategoryName = c.CategoryName
-    //    }).ToList();
-    //}
-
     [GraphQLNonNullType]
+    public async Task<List<CategoryType>> Categories([Service] ICategoriesRepository categoriesRepository)
+    {
+        var categories = await categoriesRepository.GetByProductId(ProductId);
+        return categories.Select(c => new CategoryType
+        {
+            CategoryId = c.CategoryId,
+            CategoryName = c.CategoryName
+        }).ToList();
+    }
+
     public async Task<List<OrderTypeQuantity>> Orders([Service] IOrdersRepository ordersRepository)
     {
         var orders = await ordersRepository.GetByProductId(ProductId);

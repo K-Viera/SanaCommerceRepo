@@ -16,6 +16,7 @@ public interface IProductsRepository
     Task<Product> Update(Product product);
     Task<List<Product>> GetByProductCode(string productCode);
     Task<List<ProductOrder>> GetProductOrders(int id);
+    Task<List<Product>> GetByCategoryId(int categoryId);
 }
 
 public class ProductsRepository : IProductsRepository
@@ -91,6 +92,14 @@ public class ProductsRepository : IProductsRepository
         using (var context = _contextFactory.CreateDbContext())
         {
             return Task.FromResult(context.ProductOrders.Where(po => po.ProductId == id).ToList());
+        }
+    }
+
+    public Task<List<Product>> GetByCategoryId(int categoryId)
+    {
+        using (var context = _contextFactory.CreateDbContext())
+        {
+            return Task.FromResult(context.Products.Where(p => p.ProductCategories.Any(pc => pc.CategoryId == categoryId)).ToList());
         }
     }
 }

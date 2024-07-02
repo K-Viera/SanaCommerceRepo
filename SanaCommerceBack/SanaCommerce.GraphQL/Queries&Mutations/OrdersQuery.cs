@@ -31,34 +31,3 @@ public partial class Query
         return result;
     }
 }
-
-public partial class Mutation
-{
-    private readonly IOrdersRepository _ordersRepository;
-    public Mutation(IOrdersRepository ordersRepository)
-    {
-        _ordersRepository = ordersRepository;
-    }
-    public async Task<CreateOrderResponse> CreateOrder(int customerId)
-    {
-        var order = new Order
-        {
-            CustomerId = customerId,
-            OrderDate = DateTime.Now
-        };
-        var createdOrder = await _ordersRepository.Create(order);
-        return new CreateOrderResponse
-        {
-            OrderId = createdOrder.OrderId,
-            CustomerId = createdOrder.CustomerId,
-            OrderDate = createdOrder.OrderDate
-        };
-    }
-}
-
-public class CreateOrderResponse
-{
-    public int OrderId { get; set; }
-    public int CustomerId { get; set; }
-    public DateTime OrderDate { get; set; }
-}
