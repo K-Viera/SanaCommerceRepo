@@ -22,7 +22,10 @@ const ProductCatalog = ({
           {" "}
           <button
             className="product-btn"
-            onClick={() => onAddToCart(product.id, product.quantity)}
+            onClick={(e) => {
+              e.preventDefault(); // Prevent default action
+              onAddToCart(product.id, product.quantity);
+            }}
           >
             {text}
           </button>

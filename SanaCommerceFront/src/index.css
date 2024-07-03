@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  padding-bottom: 90px;
 }
 
 code {
@@ -17,7 +18,19 @@ code {
   color: #333;
   margin-bottom: 20px;
 }
+.page-btn {
+  background-color: #4CAF50; /* Green */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 10px 0; /* Space above and below the buttons */
+}
 
+.page-btn:hover {
+  background-color: #45a049;
+}
 .container {
   border: 1px solid #ccc;
   padding: 20px;
@@ -25,7 +38,11 @@ code {
   border-radius: 5px;
   max-width: 80%;
 }
-
+.buttons-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px; /* Adjust the top margin as needed */
+}
 .product-title {
   color: #007bff;
   margin-bottom: 10px;

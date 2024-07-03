@@ -2,92 +2,47 @@ import React, { useState, useEffect } from "react";
 import Product from "../components/Product";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartSlice";
+import {
+  setEndCursor,
+  setPreviousCursor,
+  setCurrentCursor,
+} from "../redux/paginationSlice";
+import { initialProducts, generateFetchBody } from "../utils/fetchBody";
+import { current } from "@reduxjs/toolkit";
 const fetchUrl = process.env.REACT_APP_FETCH_URL;
-
-const initialProducts = [
-  {
-    id: 1,
-    title: "Product 1",
-    code: "P1001",
-    description: "A great product",
-    price: 100,
-    stock: 10,
-    quantity: 0,
-  },
-  {
-    id: 2,
-    title: "Product 2",
-    code: "P1002",
-    description: "Another great product",
-    price: 150,
-    stock: 5,
-    quantity: 0,
-  },
-  {
-    id: 3,
-    title: "Product 3",
-    code: "P1003",
-    description: "Yet another great product",
-    price: 200,
-    stock: 3,
-    quantity: 0,
-  },
-  {
-    id: 4,
-    title: "Product 4",
-    code: "P1004",
-    description: "The last great product",
-    price: 250,
-    stock: 7,
-    quantity: 0,
-  },
-  {
-    id: 5,
-    title: "Product 5",
-    code: "P1005",
-    description: "The final great product",
-    price: 300,
-    stock: 2,
-    quantity: 0,
-  },
-  {
-    id: 6,
-    title: "Product 6",
-    code: "P1006",
-    description: "The ultimate great product",
-    price: 350,
-    stock: 1,
-    quantity: 0,
-  },
-];
 
 const Catalog = () => {
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
+  const endCursor = useSelector((state) => state.pagination.endCursor);
+  const previousCursor = useSelector(
+    (state) => state.pagination.previousCursor
+  );
+  const currentCursor = useSelector((state) => state.pagination.currentCursor);
 
   const handleAddToCart = (productId, quantity) => {
-    setProducts(
-      products.map((product) => {
-        if (product.id === productId && product.stock >= quantity) {
-          product.quantity = quantity;
-          dispatch(addToCart(product));
-        }
-        return product;
-      })
-    );
-  };
-
-  useEffect(() => {
-    const updatedProducts = initialProducts.map((initialProduct) => {
-      const cartItem = cartItems.find((p) => p.id === initialProduct.id);
-      if (cartItem) {
-        return { ...initialProduct, quantity: cartItem.quantity };
+    products.map((product) => {
+      if (product.id === productId && product.stock >= quantity) {
+        product.quantity = quantity;
+        dispatch(addToCart(product));
       }
-      return initialProduct;
     });
+  };
+  
+
+  const populateQuantity=(newProducts)=>{
+    const updatedProducts = newProducts.map((product) => {
+      const cartItem = cartItems.find((p) => p.id === product.id);
+      if (cartItem) {
+        return { ...product, quantity: cartItem.quantity };
+      }
+      return product;
+    });
+
     setProducts(updatedProducts);
-  }, [cartItems]);
+  }
+
 
   const handleQuantityChange = (productId, quantity) => {
     if (quantity < 0) {
@@ -107,53 +62,50 @@ const Catalog = () => {
     );
   };
 
+  const fetchProducts = async (after, cursor) => {
+    const response = await fetch(fetchUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        // Add any other headers like authorization if needed
+      },
+      body: generateFetchBody(after, cursor),
+    });
+
+    console.log("body", generateFetchBody(after, cursor));
+
+    const { data } = await response.json();
+    if (data && data.products && data.products.edges) {
+      const products = data.products.edges.map((edge) => ({
+        id: edge.node.productId,
+        title: edge.node.productName,
+        code: edge.node.productCode,
+        description: edge.node.description,
+        price: edge.node.price,
+        stock: edge.node.stock,
+        categories: edge.node.categories,
+        quantity: 0,
+      }));
+      populateQuantity(products);
+      dispatch(setEndCursor(data.products.pageInfo.endCursor));
+      dispatch(setPreviousCursor(data.products.pageInfo.startCursor));
+      
+    }
+  };
+
   useEffect(() => {
-    const fetchProducts = async () => {
-      console.log("Fetching products");
-      const response = await fetch("https://localhost:7233/graphql/", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // Add any other headers like authorization if needed
-        },
-        body: JSON.stringify({
-          query: `
-            {
-              products {
-                description
-                price
-                productCode
-                productId
-                productName
-                stock
-                categories {
-                  categoryName
-                }
-              }
-            }
-          `,
-        }),
-      });
-
-      const { data } = await response.json();
-      if (data && data.products) {
-        console.log(data.products);
-        const products = data.products.map((product) => ({
-          id: product.productId,
-          title: product.productName,
-          code: product.productCode,
-          description: product.description,
-          price: product.price,
-          stock: product.stock,
-          categories: product.categories,
-          quantity: 0,
-        }));
-        setProducts(products);
-      }
-    };
-
-    fetchProducts();
+    fetchProducts(true, null);
   }, []);
+
+  const handleNextPage = () => {
+    // console.log("endCursor",endCursor);
+    fetchProducts(true, endCursor);
+  };
+
+  const handlePreviousPage = () => {
+    // console.log("previousCursor",previousCursor);
+    fetchProducts(false, previousCursor);
+  };
 
   return (
     <div>
@@ -170,6 +122,14 @@ const Catalog = () => {
             }
           />
         ))}
+      </div>
+      <div className="buttons-container">
+        <button className="page-btn" onClick={handlePreviousPage}>
+          Previous
+        </button>
+        <button className="page-btn" onClick={handleNextPage}>
+          Next
+        </button>
       </div>
     </div>
   );

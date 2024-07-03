@@ -14,7 +14,7 @@ namespace SanaCommerce.GraphQL;
 public partial class Query
 {
     [UseDbContext(typeof(SanaCommerceContext))]
-    //[UsePaging(DefaultPageSize = 10)]
+    [UsePaging(DefaultPageSize = 10)]
     public IQueryable<ProductType> GetProducts([ScopedService] SanaCommerceContext context)
     {
         var products = context.Products;

@@ -1,6 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit';
 import cartReducer from './CartSlice';
 import profileReducer from './ProfileSlice';
+import paginationReducer from './paginationSlice';
 
 const loadCartState = () => {
   try {
@@ -29,7 +30,6 @@ const loadProfileState = () => {
 const saveCartState = (state) => {
   try {
     const serializedCart = JSON.stringify(state);
-    console.log("Saved", serializedCart);
     localStorage.setItem('cartState', serializedCart);
   } catch (err) {
     // Handle write errors
@@ -53,7 +53,8 @@ const preloadedState = {
 const store = configureStore({
   reducer: {  
     cart: cartReducer,
-    profile: profileReducer
+    profile: profileReducer,
+    pagination: paginationReducer,
   },
   preloadedState,
 });
