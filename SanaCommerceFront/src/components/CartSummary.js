@@ -1,7 +1,6 @@
 import React from "react";
 import useSubmitOrder from "../components/SubmitOrder";
 
-
 const CartSummary = ({ cartItems, totalPay }) => {
 
   const submitOrder = useSubmitOrder();

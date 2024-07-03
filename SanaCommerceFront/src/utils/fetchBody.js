@@ -1,6 +1,4 @@
 export const generateFetchBody = (after, endCursor) => {
-  console.log("after",after);
-  console.log("cursor",endCursor);
   const argument1String = after ? "first" : "last";
   const argument2String = after ? "after" : "before";
   const cursorString = endCursor == null ? "null" : `"${endCursor}"`;
@@ -27,6 +25,21 @@ export const generateFetchBody = (after, endCursor) => {
   }
 }
         `,
+  });
+};
+
+export const generateProductQuery = (productId) => {
+  return JSON.stringify({
+    query: `{
+  product(productId: ${productId}) {
+    description
+    price
+    productCode
+    productId
+    productName
+    stock
+  }
+}`,
   });
 };
 

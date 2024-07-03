@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateProfile } from '../redux/ProfileSlice';
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
+const MySwal = withReactContent(Swal);
 
 const LoginPage = () => {
   const profile = useSelector((state) => state.profile);
@@ -13,6 +17,12 @@ const LoginPage = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(updateProfile({ email, firstName, lastName }));
+    Swal.fire({
+      title: 'Success!',
+      text: 'Profile updated successfully',
+      icon: 'success',
+      confirmButtonText: 'OK'
+    });
   };
 
   return (

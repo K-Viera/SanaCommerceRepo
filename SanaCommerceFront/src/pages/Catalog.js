@@ -5,13 +5,16 @@ import { addToCart } from "../redux/CartSlice";
 import {
   setEndCursor,
   setPreviousCursor,
-  setCurrentCursor,
 } from "../redux/paginationSlice";
 import { initialProducts, generateFetchBody } from "../utils/fetchBody";
-import { current } from "@reduxjs/toolkit";
+import Swal from 'sweetalert2';
+import withReactContent from 'sweetalert2-react-content';
+
 const fetchUrl = process.env.REACT_APP_FETCH_URL;
+const MySwal = withReactContent(Swal);
 
 const Catalog = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart.items);
@@ -26,10 +29,19 @@ const Catalog = () => {
       if (product.id === productId && product.stock >= quantity) {
         product.quantity = quantity;
         dispatch(addToCart(product));
+        showAlertAddingProducts(quantity);
       }
     });
   };
   
+  const showAlertAddingProducts= (quantity) => {
+    MySwal.fire({
+      title:'Success!',
+      text: `${quantity} products added to the cart`,
+      icon: 'ok',
+      confirmButtonText: 'OK'
+    });
+  };
 
   const populateQuantity=(newProducts)=>{
     const updatedProducts = newProducts.map((product) => {
@@ -63,6 +75,7 @@ const Catalog = () => {
   };
 
   const fetchProducts = async (after, cursor) => {
+    setIsLoading(true);
     const response = await fetch(fetchUrl, {
       method: "POST",
       headers: {
@@ -89,7 +102,7 @@ const Catalog = () => {
       populateQuantity(products);
       dispatch(setEndCursor(data.products.pageInfo.endCursor));
       dispatch(setPreviousCursor(data.products.pageInfo.startCursor));
-      
+      setIsLoading(false);
     }
   };
 
@@ -103,13 +116,16 @@ const Catalog = () => {
   };
 
   const handlePreviousPage = () => {
-    // console.log("previousCursor",previousCursor);
     fetchProducts(false, previousCursor);
   };
 
   return (
     <div>
-      <h1 className="title">Catalog</h1>
+        {isLoading ? (
+      <div className="loading-container">Loading...</div>
+    ) : (
+      <div>
+              <h1 className="title">Catalog</h1>
       <div className="products-grid">
         {products.map((product) => (
           <Product
@@ -131,6 +147,9 @@ const Catalog = () => {
           Next
         </button>
       </div>
+      </div>
+    )}
+
     </div>
   );
 };
