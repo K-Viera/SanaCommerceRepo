@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import Product from "../components/Product";
 import { useSelector, useDispatch } from "react-redux";
 import { addToCart } from "../redux/CartSlice";
+const fetchUrl = process.env.REACT_APP_FETCH_URL;
 
 const initialProducts = [
   {
@@ -108,7 +109,7 @@ const Catalog = () => {
 
   useEffect(() => {
     const fetchProducts = async () => {
-      console.log("Fetching products")
+      console.log("Fetching products");
       const response = await fetch("https://localhost:7233/graphql/", {
         method: "POST",
         headers: {
@@ -125,6 +126,9 @@ const Catalog = () => {
                 productId
                 productName
                 stock
+                categories {
+                  categoryName
+                }
               }
             }
           `,
@@ -141,6 +145,7 @@ const Catalog = () => {
           description: product.description,
           price: product.price,
           stock: product.stock,
+          categories: product.categories,
           quantity: 0,
         }));
         setProducts(products);
@@ -153,17 +158,19 @@ const Catalog = () => {
   return (
     <div>
       <h1 className="title">Catalog</h1>
-      {products.map((product) => (
-        <Product
-          key={product.id}
-          product={product}
-          onAddToCart={handleAddToCart}
-          text="Add to Cart"
-          handleQuantityChange={(quantity) =>
-            handleQuantityChange(product.id, quantity)
-          }
-        />
-      ))}
+      <div className="products-grid">
+        {products.map((product) => (
+          <Product
+            key={product.id}
+            product={product}
+            onAddToCart={handleAddToCart}
+            text="Add to Cart"
+            handleQuantityChange={(quantity) =>
+              handleQuantityChange(product.id, quantity)
+            }
+          />
+        ))}
+      </div>
     </div>
   );
 };

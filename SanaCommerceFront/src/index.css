@@ -45,7 +45,13 @@ code {
   padding: 5px;
   border-radius: 5px;
 }
-
+.product-categories {
+  background-color: #e0e0ff; /* Light blue background */
+  padding: 5px;
+  border-radius: 5px;
+  margin-top: 10px; /* Space above the categories */
+  display: inline-block; /* Make it align nicely with other inline elements */
+}
 .product-code {
   background-color: #f0f0f0;
 }
@@ -171,15 +177,32 @@ code {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  box-sizing: border-box; /* Ensure padding and border are included in width */
+  box-sizing: border-box;
 }
 
 .button:hover {
   background-color: #0056b3;
 }
 
+.products-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin: 20px;
+}
+
+.product-container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 20px;
+  background-color: #f9f9f9;
+}
+
 @media (max-width: 768px) {
 
+  .products-grid {
+    grid-template-columns: 1fr;
+  }
   .form {
     max-width: 95%;
     padding: 15px;

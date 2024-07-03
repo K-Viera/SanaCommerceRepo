@@ -8,14 +8,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using HotChocolate.Types;
 
 namespace SanaCommerce.GraphQL;
 public partial class Query
 {
     [UseDbContext(typeof(SanaCommerceContext))]
-    [UseProjection]
-    [UseFiltering]
-    [UseSorting]
+    //[UsePaging(DefaultPageSize = 10)]
     public IQueryable<ProductType> GetProducts([ScopedService] SanaCommerceContext context)
     {
         var products = context.Products;

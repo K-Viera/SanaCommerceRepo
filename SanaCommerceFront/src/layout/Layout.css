@@ -11,12 +11,13 @@
     justify-content: space-between;
     align-items: center;
     width: 90%;
-    /* Adjust based on preference */
 }
 
 .page-name {
     color: #f0f0f0;
     margin: 0;
+    font-weight: bold;
+    font-size: 2em;
 }
 
 .nav-link {
@@ -45,4 +46,45 @@
     position: fixed;
     bottom: 0;
     width: 100%;
+}
+
+@media (max-width: 768px) {
+    .header, .header-content, .footer {
+        padding: 15px;
+    }
+
+    .nav-link, .login-button {
+        font-size: 1em;
+        padding: 8px 12px;
+    }
+    .page-name {
+        font-weight: bold;
+        font-size: 1.5em;
+    }
+}
+
+@media (max-width: 600px) {
+    .page-name {
+        font-weight: bold;
+        font-size: 1em;
+    }
+    .header {
+        flex-direction: column;
+        padding: 10px;
+    }
+
+    .header-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .nav-link {
+        display: block; 
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+
+    .footer {
+        padding: 8px;
+    }
 }

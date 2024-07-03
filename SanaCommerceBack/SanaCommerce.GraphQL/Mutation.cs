@@ -1,4 +1,5 @@
-﻿using SanaCommerce.Database.Models;
+﻿using HotChocolate;
+using SanaCommerce.Database.Models;
 using SanaCommerce.Database.Repositories;
 using SanaCommerce.GraphQL.Types;
 using System;
@@ -40,7 +41,7 @@ public class Mutation
         };
     }
 
-    public async Task<CreateProductResponse> CreateProduct(string productName, string productCode, string description, decimal price, int stock)
+    public async Task<CreateProductResponse> CreateProduct(string productName, string productCode, string description, decimal price, int stock, List<int> categoriesId)
     {
         try
         {
@@ -50,8 +51,25 @@ public class Mutation
                 ProductCode = productCode,
                 Description = description,
                 Price = price,
-                Stock = stock
+                Stock = stock,
+                ProductCategories = new List<ProductCategory>(),
             };
+
+            foreach (var categoryId in categoriesId)
+            {
+                var category = await _categoriesRepository.Get(categoryId);
+                if (category == null)
+                {
+                    throw new GraphQLException(ErrorBuilder.New()
+                        .SetMessage("Category not found")
+                        .SetCode("CATEGORY_NOT_FOUND")
+                        .Build());
+                }
+                product.ProductCategories.Add(new ProductCategory
+                {
+                    CategoryId = categoryId
+                });
+            }
 
             var createdProduct = await _productsRepository.Create(product);
 
@@ -66,12 +84,14 @@ public class Mutation
             };
 
         }
+        catch (GraphQLException gqlEx)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             throw new Exception(ex.Message);
         }
-
-
     }
 
     public async Task<CreateOrderResponse> CreateOrder(CreateOrderRequest orderRequest)
@@ -102,6 +122,26 @@ public class Mutation
 
             foreach (var orderLine in orderRequest.OrderLines)
             {
+                var product = await _productsRepository.Get(orderLine.ProductId);
+
+                if (product == null)
+                {
+                    throw new GraphQLException(ErrorBuilder.New()
+                        .SetMessage("Product not found")
+                        .SetCode("PRODUCT_NOT_FOUND")
+                        .Build());
+                }
+
+                if (product.Stock < orderLine.Quantity)
+                {
+                    throw new GraphQLException(ErrorBuilder.New()
+                        .SetMessage("Not enough stock")
+                        .SetCode("NOT_ENOUGH_STOCK")
+                        .Build());
+                }
+
+                product.Stock -= orderLine.Quantity;
+                await _productsRepository.Update(product);
                 var productOrder = new ProductOrder
                 {
                     ProductId = orderLine.ProductId,
@@ -116,6 +156,10 @@ public class Mutation
                 CustomerId = createdOrder.CustomerId,
                 OrderDate = createdOrder.OrderDate
             };
+        }
+        catch (GraphQLException gqlEx)
+        {
+            throw;
         }
         catch (Exception ex)
         {

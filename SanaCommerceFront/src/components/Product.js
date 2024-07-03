@@ -6,13 +6,18 @@ import { productPropType } from "./types/PropTypes";
 const Product = ({ product,text, onAddToCart, handleQuantityChange }) => {
 
   return (
-    <div className="container">
+    <div className="product-container">
       <h2 className="product-title">{product.title}</h2>
       <p className="product-description">{product.description}</p>
       <div className="product-details">
         <span className="product-code"> Code: {product.code}</span>
         <span className="product-price"> Price: ${product.price}</span>
         <span className="product-stock"> Available Stock: {product.stock}</span>
+        {product.categories && product.categories.length > 0 && (
+          <p className="product-categories">
+            Categories: {product.categories.map(category => category.categoryName).join(', ')}
+          </p>
+        )}
       </div>
       <ProductCatalog
         product={product}

@@ -11,7 +11,7 @@ const Layout = ({ children }) => {
     <div>
       <header className="header">
         <div className="header-content">
-          <h1 className="page-name">Sana Commerce</h1>
+          <span className="page-name">Sana Commerce</span>
           <nav>
             <Link to="/" className="nav-link">
               Catalog

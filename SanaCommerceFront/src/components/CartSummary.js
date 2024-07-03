@@ -1,6 +1,15 @@
 import React from "react";
+import useSubmitOrder from "../components/SubmitOrder";
+
 
 const CartSummary = ({ cartItems, totalPay }) => {
+
+  const submitOrder = useSubmitOrder();
+
+  const handleProcessOrder = () => {
+    submitOrder();
+  }
+
   return (
     <>
       <h2 className="title">Cart Summary</h2>
@@ -16,7 +25,7 @@ const CartSummary = ({ cartItems, totalPay }) => {
         ))}
       </ul>
       <p className="total">Cart Total: ${totalPay}</p>
-      <button className="process-btn "> Process Order</button>
+      <button className="process-btn" onClick={handleProcessOrder} > Process Order</button>
     </>
   );
 };

@@ -1,5 +1,4 @@
 input CreateOrderRequestInput {
-  customerId: Int!
   orderLines: [OrderLineInput!]!
   customerEmail: String
   firstName: String
@@ -22,24 +21,6 @@ The `DateTime` scalar represents an ISO-8601 compliant date time type.
 """
 scalar DateTime @specifiedBy(url: "https://www.graphql-scalars.com/date-time")
 
-type Query {
-  categories(
-    where: CategoryTypeFilterInput
-    order: [CategoryTypeSortInput!]
-  ): [CategoryType!]!
-  customers(
-    where: CustomerTypeFilterInput
-    order: [CustomerTypeSortInput!]
-  ): [CustomerType!]!
-  orders(
-    where: OrderTypeFilterInput
-    order: [OrderTypeSortInput!]
-  ): [OrderType!]!
-  products(
-    where: ProductTypeFilterInput
-    order: [ProductTypeSortInput!]
-  ): [ProductType!]!
-}
 
 type Mutation {
   createCategory(categoryName: String!): CreateCategoryResponse!
