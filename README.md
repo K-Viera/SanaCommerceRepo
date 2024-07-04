@@ -10,8 +10,8 @@ Welcome to the Sana Commerce Web Shop project! This project is designed as a bas
 
 To get started with this project, please follow the instructions provided in the README files located in both the `SanaCommerceBack` and `SanaCommerceFront` directories.
 
-[Backend README](../../../../../c:/Users/Kevin/Personal/SanaCommerceRepo/SanaCommerceBack/README.md)
-[Frontend README](../../../../../c:/Users/Kevin/Personal/SanaCommerceRepo/SanaCommerceFront/README.md)
+- [Backend README](./SanaCommerceBack/README.md)
+- [Frontend README](./SanaCommerceFront/README.md)
 
 ## Project Structure
 
