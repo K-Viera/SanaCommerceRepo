@@ -21,7 +21,6 @@ The `DateTime` scalar represents an ISO-8601 compliant date time type.
 """
 scalar DateTime @specifiedBy(url: "https://www.graphql-scalars.com/date-time")
 
-
 type Mutation {
   createCategory(categoryName: String!): CreateCategoryResponse!
   createProduct(
@@ -30,6 +29,7 @@ type Mutation {
     description: String!
     price: Decimal!
     stock: Int!
+    categoriesId: [Int!]!
   ): CreateProductResponse!
   createOrder(orderRequest: CreateOrderRequestInput!): CreateOrderResponse!
 }
@@ -76,24 +76,24 @@ input OrderTypeSortInput {
   customerId: SortEnumType
 }
 
-input ProductTypeFilterInput {
-  and: [ProductTypeFilterInput!]
-  or: [ProductTypeFilterInput!]
-  productId: IntOperationFilterInput
-  productName: StringOperationFilterInput
-  productCode: StringOperationFilterInput
-  description: StringOperationFilterInput
-  price: DecimalOperationFilterInput
-  stock: IntOperationFilterInput
-}
+"""
+A connection to a list of items.
+"""
+type ProductsConnection {
+  """
+  Information to aid in pagination.
+  """
+  pageInfo: PageInfo!
 
-input ProductTypeSortInput {
-  productId: SortEnumType
-  productName: SortEnumType
-  productCode: SortEnumType
-  description: SortEnumType
-  price: SortEnumType
-  stock: SortEnumType
+  """
+  A list of edges.
+  """
+  edges: [ProductsEdge!]
+
+  """
+  A flattened list of the nodes.
+  """
+  nodes: [ProductType!]
 }
 
 input IntOperationFilterInput {
@@ -146,25 +146,56 @@ input DateTimeOperationFilterInput {
   nlte: DateTime
 }
 
-input DecimalOperationFilterInput {
-  eq: Decimal
-  neq: Decimal
-  in: [Decimal]
-  nin: [Decimal]
-  gt: Decimal
-  ngt: Decimal
-  gte: Decimal
-  ngte: Decimal
-  lt: Decimal
-  nlt: Decimal
-  lte: Decimal
-  nlte: Decimal
+"""
+Information about pagination in a connection.
+"""
+type PageInfo {
+  """
+  Indicates whether more edges exist following the set defined by the clients arguments.
+  """
+  hasNextPage: Boolean!
+
+  """
+  Indicates whether more edges exist prior the set defined by the clients arguments.
+  """
+  hasPreviousPage: Boolean!
+
+  """
+  When paginating backwards, the cursor to continue.
+  """
+  startCursor: String
+
+  """
+  When paginating forwards, the cursor to continue.
+  """
+  endCursor: String
+}
+
+type ProductType {
+  categories: [CategoryType!]!
+  orders: [OrderTypeQuantity!]!
+  productId: Int!
+  productName: String!
+  productCode: String!
+  description: String!
+  price: Decimal!
+  stock: Int!
 }
 
 """
-The built-in `Decimal` scalar type.
+An edge in a connection.
 """
-scalar Decimal
+type ProductsEdge {
+  """
+  A cursor for use in pagination.
+  """
+  cursor: String!
+
+  """
+  The item at the end of the edge.
+  """
+  node: ProductType!
+}
 
 type OrderType {
   customer: CustomerType!
@@ -187,15 +218,12 @@ type CategoryType {
   categoryName: String!
 }
 
-type ProductType {
-  categories: [CategoryType!]!
-  orders: [OrderTypeQuantity!]!
-  productId: Int!
-  productName: String!
-  productCode: String!
-  description: String!
-  price: Decimal!
-  stock: Int!
+type OrderTypeQuantity {
+  customer: CustomerType!
+  quantity: Int
+  orderId: Int!
+  orderDate: DateTime!
+  customerId: Int!
 }
 
 type CreateCategoryResponse {
@@ -212,10 +240,7 @@ type CreateProductResponse {
   stock: Int!
 }
 
-type OrderTypeQuantity {
-  customer: CustomerType!
-  quantity: Int
-  orderId: Int!
-  orderDate: DateTime!
-  customerId: Int!
-}
+"""
+The built-in `Decimal` scalar type.
+"""
+scalar Decimal
